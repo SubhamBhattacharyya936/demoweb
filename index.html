@@ -76,7 +76,7 @@ a { color: inherit; text-decoration: none; }
   color: #f59e0b;
   letter-spacing: 0.05em;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframe spin { to { transform: rotate(360deg); } }
 .pre-eyebrow {
   font-family: "JetBrains Mono", monospace;
   font-size: 10px;
@@ -332,7 +332,7 @@ a { color: inherit; text-decoration: none; }
   color: #fbbf24;
   animation: bounceDown 1.4s ease-in-out infinite;
 }
-@keyframes bounceDown {
+@keyframe bounceDown {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(4px); }
 }
@@ -395,7 +395,7 @@ a { color: inherit; text-decoration: none; }
   background: #fbbf24;
   animation: pulseDot 1.5s ease-in-out infinite;
 }
-@keyframes pulseDot { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframe pulseDot { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 
 /* ============================================================
    4. STRUCTURA (all styles from structura.css)
@@ -1070,7 +1070,7 @@ a { color: inherit; text-decoration: none; }
     <div class="pre-bar-wrap"><div class="pre-bar" id="pre-bar"></div></div>
     <div class="pre-status">
       <span>INITIALIZING SEQUENCE</span>
-      <span><span id="pre-count">0</span> / <span id="pre-total">150</span> FRAMES</span>
+      <span><span id="pre-count">0</span> / <span id="pre-total">150</span> frame</span>
     </div>
   </div>
 </div>
@@ -1126,7 +1126,7 @@ a { color: inherit; text-decoration: none; }
 
       <div class="villa-hud-card">
         <span style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.2em;color:#71717a;">Scrub</span>
-        <input id="villa-slider" class="premium-slider" type="range" min="1" max="240" value="1" aria-label="Scrub villa frames" />
+        <input id="villa-slider" class="premium-slider" type="range" min="1" max="240" value="1" aria-label="Scrub villa frame" />
       </div>
 
       <div class="villa-scroll-prompt">
@@ -1439,7 +1439,7 @@ a { color: inherit; text-decoration: none; }
 <!-- Caching indicator -->
 <div id="caching-indicator">
   <span class="dot"></span>
-  <span id="cache-text">CACHING FRAMES: 150/240</span>
+  <span id="cache-text">CACHING frame: 150/240</span>
 </div>
 
 <script>
@@ -1449,13 +1449,13 @@ a { color: inherit; text-decoration: none; }
 /* ============================================================
    VILLA CANVAS — frame sequence + scroll scrub
    ============================================================ */
-var TOTAL_FRAMES = 240;
+var TOTAL_frame = 240;
 var INITIAL_LOAD = 150;
 var PIN_DISTANCE = 3600;
 var PAD = 4;
 var PREFIX = "frame_";
 var EXT = ".jpg";
-var DIR = "frames";
+var DIR = "frame";
 
 var canvas      = document.getElementById("villa-canvas");
 var ctx         = canvas.getContext("2d");
@@ -1484,11 +1484,11 @@ var scrollQueued = false;
 var trackTop = 0;
 var initialReady = false;
 var backgroundStarted = false;
-var preTarget = Math.min(INITIAL_LOAD, TOTAL_FRAMES);
+var preTarget = Math.min(INITIAL_LOAD, TOTAL_frame);
 
 preTotal.textContent = String(preTarget);
-hudSlider.max = String(TOTAL_FRAMES);
-hudCounter.textContent = "FRAME 001 / " + String(TOTAL_FRAMES).padStart(3, "0");
+hudSlider.max = String(TOTAL_frame);
+hudCounter.textContent = "FRAME 001 / " + String(TOTAL_frame).padStart(3, "0");
 
 function frameUrl(i) {
   return DIR + "/" + PREFIX + String(i).padStart(PAD, "0") + EXT;
@@ -1512,14 +1512,14 @@ function resizeCanvas() {
 function closestLoaded(target) {
   var img = images.get(target);
   if (img && img.complete && img.naturalWidth > 0) return img;
-  for (var d = 1; d <= TOTAL_FRAMES; d++) {
+  for (var d = 1; d <= TOTAL_frame; d++) {
     var p = target - d;
     if (p >= 1) {
       var ip = images.get(p);
       if (ip && ip.complete && ip.naturalWidth > 0) return ip;
     }
     var n = target + d;
-    if (n <= TOTAL_FRAMES) {
+    if (n <= TOTAL_frame) {
       var inx = images.get(n);
       if (inx && inx.complete && inx.naturalWidth > 0) return inx;
     }
@@ -1529,7 +1529,7 @@ function closestLoaded(target) {
 
 /* Object-fit: cover */
 function drawFrame(index) {
-  index = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(index)));
+  index = Math.max(1, Math.min(TOTAL_frame, Math.round(index)));
   activeFrame = index;
 
   var img = images.get(index);
@@ -1549,7 +1549,7 @@ function drawFrame(index) {
 
 /* rAF-batched render */
 function requestRender(index) {
-  activeFrame = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(index)));
+  activeFrame = Math.max(1, Math.min(TOTAL_frame, Math.round(index)));
   if (renderQueued) return;
   renderQueued = true;
   requestAnimationFrame(function () {
@@ -1609,14 +1609,14 @@ function onInitialReady() {
 function startBackgroundLoad() {
   if (backgroundStarted) return;
   backgroundStarted = true;
-  var remaining = TOTAL_FRAMES - INITIAL_LOAD;
+  var remaining = TOTAL_frame - INITIAL_LOAD;
   if (remaining <= 0) return;
 
   cacheInd.classList.add("visible");
-  cacheText.textContent = "CACHING FRAMES: " + INITIAL_LOAD + "/" + TOTAL_FRAMES;
+  cacheText.textContent = "CACHING frame: " + INITIAL_LOAD + "/" + TOTAL_frame;
 
   var queue = [];
-  for (var i = INITIAL_LOAD + 1; i <= TOTAL_FRAMES; i++) queue.push(i);
+  for (var i = INITIAL_LOAD + 1; i <= TOTAL_frame; i++) queue.push(i);
 
   var loadedBg = 0;
   var CONCURRENCY = 6;
@@ -1629,7 +1629,7 @@ function startBackgroundLoad() {
       loadImage(next).then(function () {
         active--;
         loadedBg++;
-        cacheText.textContent = "CACHING FRAMES: " + (INITIAL_LOAD + loadedBg) + "/" + TOTAL_FRAMES;
+        cacheText.textContent = "CACHING frame: " + (INITIAL_LOAD + loadedBg) + "/" + TOTAL_frame;
         if (loadedBg >= remaining) {
           cacheInd.classList.remove("visible");
         } else if (queue.length > 0) {
@@ -1657,13 +1657,13 @@ function applyScroll() {
   var progress = (y - trackTop) / PIN_DISTANCE;
   progress = Math.max(0, Math.min(1, progress));
 
-  var frame = 1 + progress * (TOTAL_FRAMES - 1);
+  var frame = 1 + progress * (TOTAL_frame - 1);
   requestRender(frame);
 
   var rounded = Math.round(frame);
   var pct = Math.round(progress * 100);
 
-  hudCounter.textContent = "FRAME " + String(rounded).padStart(3, "0") + " / " + String(TOTAL_FRAMES).padStart(3, "0");
+  hudCounter.textContent = "FRAME " + String(rounded).padStart(3, "0") + " / " + String(TOTAL_frame).padStart(3, "0");
   hudBar.style.width = pct + "%";
   hudPercent.textContent = pct + "%";
   hudSlider.value = String(rounded);
@@ -1685,12 +1685,12 @@ hudSlider.addEventListener("input", function (e) {
   var f = parseInt(e.target.value, 10);
   if (isNaN(f)) return;
   requestRender(f);
-  hudCounter.textContent = "FRAME " + String(f).padStart(3, "0") + " / " + String(TOTAL_FRAMES).padStart(3, "0");
-  var pct = Math.round((f / TOTAL_FRAMES) * 100);
+  hudCounter.textContent = "FRAME " + String(f).padStart(3, "0") + " / " + String(TOTAL_frame).padStart(3, "0");
+  var pct = Math.round((f / TOTAL_frame) * 100);
   hudBar.style.width = pct + "%";
   hudPercent.textContent = pct + "%";
 
-  var p = (f - 1) / (TOTAL_FRAMES - 1);
+  var p = (f - 1) / (TOTAL_frame - 1);
   var target = trackTop + p * PIN_DISTANCE;
   window.scrollTo({ top: target, behavior: "auto" });
 });
@@ -1861,3 +1861,5 @@ else init();
 
 </body>
 </html>
+
+
